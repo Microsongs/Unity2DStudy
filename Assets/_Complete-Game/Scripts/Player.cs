@@ -161,8 +161,8 @@ namespace Completed
 		//It takes a generic parameter T which in the case of Player is a Wall which the player can attack and destroy.
 		protected override void OnCantMove <T> (T component)
 		{
-			//Set hitWall to equal the component passed in as a parameter.
-			Wall hitWall = component as Wall;
+            //Set hitWall to equal the component passed in as a parameter.
+            Wall hitWall = component as Wall;
 			
 			//Call the DamageWall function of the Wall we are hitting.
 			hitWall.DamageWall (wallDamage);

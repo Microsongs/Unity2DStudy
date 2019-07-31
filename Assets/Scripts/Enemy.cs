@@ -19,6 +19,7 @@ public class Enemy : MovingObject
     // 플레이어를 찾아 공격할 수 있는 기능을 추가하여 오버라이드
     protected override void Start()
     {
+        GameManager.instance.AddEnemyToList(this);
         animator = GetComponent<Animator>();
         target = GameObject.FindGameObjectWithTag("Player").transform;
         base.Start();
@@ -32,8 +33,29 @@ public class Enemy : MovingObject
             skipMove = false;
             return;
         }
-        AttemptMove<T>(xDir, yDir);
+        base.AttemptMove<T>(xDir, yDir);
         skipMove = true;
+    }
+    public void moveEnemy()
+    {
+        int xDir = 0;
+        int yDir = 0;
+
+        if (Mathf.Abs(target.position.x - transform.position.x) < float.Epsilon)
+            yDir = target.position.y > transform.position.y ? 1 : -1;
+        else
+            xDir = target.position.x > transform.position.x ? 1 : -1;
+
+        AttemptMove<Player>(xDir, yDir);
+    }
+
+    protected override void OnCantMove<T>(T component)
+    {
+        Player hitPlayer = component as Player;
+
+        animator.SetTrigger("enemyAttack");
+
+        hitPlayer.LoseFood(playerDamage);
     }
 
     // Update is called once per frame

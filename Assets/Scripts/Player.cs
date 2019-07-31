@@ -35,30 +35,33 @@ public class Player : MovingObject
     void Update()
     {
         // 플레이어의 턴이 아니면 코드가 실행되지 않게 한다.
-        if (!GameManager.instance.playerTurn)
+        if (!GameManager.instance.playersTurn)
             return;
         // 수평, 수직 변수를 선언 이들은 1이나 -1로 저장해서 사용
         int horizontal = 0;
         int vertical = 0;
 
         // 입력을 받는다.
-        horizontal = (int)Input.GetAxisRaw("Horizontal");
-        vertical = (int)Input.GetAxisRaw("Vertical");
+        horizontal = (int)(Input.GetAxisRaw("Horizontal"));
+        vertical = (int)(Input.GetAxisRaw("Vertical"));
 
         // 대각선 이동을 방지
         if (horizontal != 0)
-            wallDamage = vertical = 0;
+            vertical = 0;
 
         // 입력이 들어왔으면 움직일 수 있도록 한다.
         // Wall은 벽과의 상호작용을 위해 추가
         if (horizontal != 0 || vertical != 0)
+        {
             AttemptMove<Wall>(horizontal, vertical);
+        }
     }
 
     // MovingObject에서는 OnCantMove를 내부구현 없는 추상함수로 하용하였음
     // 이 함수는 플레이어가 이동하려는 공간에 벽이 있고, 이에 막히는 경우의 행동 작성
     protected override void OnCantMove<T>(T component)
     {
+        Debug.Log("NO");
         // hitwall 변수를 component형으로 캐스팅
         Wall hitwall = component as Wall;
         // 우리가 타격한 벽이 얼마나 피해를 입었는지 알 기 위해 호출
@@ -78,7 +81,7 @@ public class Player : MovingObject
     // 적이 플레이어 공격 시 얼만큼의 점수를 잃게 될지 가리킴
     // 총 음식점수에서 loss만큼의 점수를 빼고, CheckIfGameOver를 호출해
     // 게임 오버 여부를 확인
-    public void LoadFood(int loss)
+    public void LoseFood(int loss)
     {
         animator.SetTrigger("playerHit");
         food -= loss;
@@ -122,6 +125,7 @@ public class Player : MovingObject
 
     protected override void AttemptMove<T>(int xDir, int yDir)
     {
+        
         // 움직일 떄 마다 음식 점수 -1
         food--;
         // AttempMOve
@@ -129,6 +133,6 @@ public class Player : MovingObject
 
         RaycastHit2D hit;
         CheckIfGameOver();
-        GameManager.instance.playerTurn = false;
+        GameManager.instance.playersTurn = false;
     }
 }
